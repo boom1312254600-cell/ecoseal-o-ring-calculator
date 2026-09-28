@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSeal O-Ring Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+      rel="stylesheet">
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1A1A18;--ink2:#4A4A47;--ink3:#8A8A85;
+  --paper:#F4F3EF;--surface:#FFF;--panel:#ECEAE4;--rule:#D4D2CA;
+  --blue:#0089CF;--blue2:#00699e;--blue3:#CFE9F8;--blue4:#EAF6FD;
+  --yellow:#FFC629;--yellow2:#E0A800;--yellow3:#FFF3D0;--yellow4:#FFFAE9;
+  --green:#1A7A56;--green2:#D0EDE2;--green3:#EAF7F2;
+  --amber:#B85C00;--amber2:#FAEBD7;
+  --red:#A02020;--red2:#FDDCDC;
+  --r:6px;--r2:10px;--r3:14px;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans Thai',sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+}
+body{font-family:var(--sans);font-size:16px;color:var(--ink);background:var(--surface);min-height:100vh}
+.app{max-width:1080px;margin:0 auto;padding:2rem 1.5rem 3rem}
+
+/* topbar */
+.topbar{display:flex;align-items:center;gap:.6rem;padding-bottom:1.1rem;border-bottom:1px solid var(--rule);margin-bottom:2rem}
+.t-icon{width:30px;height:30px;border-radius:8px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.t-title{font-size:14px;font-weight:700;letter-spacing:.03em;color:var(--ink)}
+.t-sub{display:none}
+.t-badge{margin-left:auto;font-size:11px;font-weight:600;font-family:var(--mono);background:var(--yellow3);color:var(--yellow2);padding:4px 11px;border-radius:20px;letter-spacing:.05em;white-space:nowrap}
+
+/* page head */
+.page-head{margin-bottom:2.25rem}
+.page-title{font-size:30px;font-weight:700;color:var(--blue);margin-bottom:.4rem;letter-spacing:-.01em}
+.page-sub{font-size:15px;color:var(--ink2)}
+
+/* layout */
+.cols{display:grid;grid-template-columns:1.15fr 1fr;gap:2.5rem;align-items:start}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+#right-col{border-left:1px solid var(--rule);padding-left:2.25rem}
+@media(max-width:700px){#right-col{border-left:none;padding-left:0;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--rule)}}
+
+/* card */
+.card{margin-bottom:1.85rem}
+.card:last-child{margin-bottom:0}
+.ch{padding-bottom:.6rem;display:flex;align-items:center;gap:8px}
+.ch-dot{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.ch-title{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:0;text-transform:none}
+.cb{padding:0}
+
+/* fields */
+.field{margin-bottom:.8rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=number]{
+  width:100%;padding:8px 10px;
+  border:1.5px solid var(--rule);border-radius:var(--r);
+  font-size:16px;font-family:var(--mono);color:var(--ink);background:var(--paper);
+  transition:border-color .15s,box-shadow .15s;
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus{outline:none;border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(46,84,120,.1)}
+
+/* chips */
+.chips{display:flex;gap:4px;background:var(--panel);border-radius:var(--r2);padding:4px;margin-top:3px}
+.chip{flex:1;padding:8px 10px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:transparent;color:var(--ink2);transition:all .12s;user-select:none;text-align:center}
+.chip:hover{color:var(--blue)}
+.chip.on{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.chip-note{font-size:12px;color:var(--ink3);line-height:1.5;margin-top:7px}
+
+/* button */
+.btn{width:100%;padding:11px;background:var(--yellow);color:var(--blue);border:none;border-radius:var(--r2);font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;margin-top:1rem}
+.btn:hover{background:var(--yellow2)}
+.btn.sm{padding:8px 12px;font-size:15px;margin-top:.75rem;background:var(--blue);color:#fff}
+.btn.sm:hover{background:var(--blue2)}
+
+/* ref table */
+.rtable{width:100%;border-collapse:collapse;font-size:13px}
+.rtable th{padding:4px 7px;text-align:left;color:var(--ink3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--rule)}
+.rtable td{padding:5px 7px;border-bottom:1px solid var(--rule);color:var(--ink2)}
+.rtable tr:last-child td{border-bottom:none}
+.rtable .mn{font-family:var(--mono);font-size:12px}
+.rtable-gap{height:7px}
+
+/* results */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1rem;color:var(--ink3);text-align:center;gap:.5rem}
+.empty .ei{font-size:36px;opacity:.2}
+.empty p{font-size:14px;line-height:1.7}
+
+/* stat blocks (flat, TOMORU-style) */
+.stat{margin-bottom:1.6rem}
+.stat:last-child{margin-bottom:0}
+.stat-lbl{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.stat-range{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--ink)}
+.stat-range .u{font-size:13px;color:var(--ink3);font-weight:400;margin-left:2px}
+.stat.accent{border-left:3px solid var(--yellow);padding-left:.85rem}
+.stat.accent .stat-lbl{color:var(--yellow2);font-weight:600}
+.stat-big{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--blue);line-height:1}
+.stat-big .u{font-size:14px;color:var(--ink3);font-weight:400;margin-left:3px}
+
+/* constraint pills */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem;padding-top:.85rem;border-top:1px solid var(--rule)}
+.cpill{padding:0}
+.cpill .cl{font-size:12px;color:var(--ink3);margin-bottom:2px}
+.cpill .cv{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink2)}
+
+/* meters */
+.mwrap{margin-bottom:.65rem}
+.mwrap:last-child{margin-bottom:0}
+.mtop{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--ink2);margin-bottom:4px}
+.mtop strong{font-family:var(--mono);font-size:14px;color:var(--ink)}
+.mtop span{opacity:.65}
+.mtrack{height:7px;background:var(--panel);border-radius:4px;overflow:hidden}
+.mfill{height:100%;border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.go{background:var(--green)}
+.bad{background:var(--red)}
+
+/* check items */
+.chklist{display:flex;flex-direction:column;gap:5px}
+.chki{display:flex;align-items:flex-start;gap:9px;padding:.5rem .75rem;border-radius:var(--r);font-size:14px}
+.chki.pass{background:var(--green3);color:var(--green)}
+.chki.fail{background:var(--red2);color:var(--red)}
+.chki.warn{background:var(--amber2);color:var(--amber)}
+.chki-icon{font-size:15px;flex-shrink:0;padding-top:1px}
+.chki-body{flex:1}
+.chki-label{font-weight:500}
+.chki-note{font-size:12px;opacity:.75;margin-top:1px}
+.chki-val{font-family:var(--mono);font-size:13px;font-weight:500;white-space:nowrap;padding-top:1px}
+
+/* alert */
+.alert{padding:8px 12px;border-radius:var(--r);font-size:14px;margin-bottom:.75rem}
+.alert.err{background:var(--red2);color:var(--red);border:1px solid #f5c0c0}
+.alert.warn{background:var(--amber2);color:var(--amber);border:1px solid #f5d5a0}
+.alert.ok{background:var(--green3);color:var(--green);border:1px solid #9ddfc5}
+</style> </head>
+  <body>
+    <div class="app"> <img src="ecoseal-logo-01.png" alt="" style="width: 257px; height: 98px;"><img
+        src="Screenshot%202026-09-28%20084849.png" alt="" style="width: 319px; height: 88px;"></div>
+    <div class="app" style="margin-top: -28px;"><span class="ch-title"></span>
+      <div class="cols">
+        <!-- LEFT -->
+        <div>
+          <div class="card">
+            <div class="ch">
+              <div class="ch-dot" style="background:var(--blue3);color:var(--blue2)">⊡</div>
+              <span class="ch-title">ขนาดร่อง</span></div>
+            <div class="cb">
+              <div class="row2">
+                <div class="field" style="text-align: center;"> <label>OD ร่อง
+                    (mm)</label> <input id="g-od" value="50" step="0.001" type="number">
+                </div>
+                <div class="field" style="text-align: center;"> <label>ID ร่อง
+                    (mm)</label> <input id="g-id" value="44" step="0.001" type="number">
+                </div>
+              </div>
+              <div class="field"> <label>W ร่อง — ความกว้าง (mm)</label> <input
+                  id="g-w" value="5" step="0.001" type="number"> </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <div class="ch-dot" style="background:var(--yellow3);color:var(--yellow2)">◎</div>
+              <span class="ch-title">ประเภท Seal</span> </div>
+            <div class="cb">
+              <div class="chips" id="seal-chips"> <button class="chip on" data-val="static"
+                  onclick="pickSeal(this)">Static</button> <button class="chip"
+                  data-val="dynamic" onclick="pickSeal(this)">Dynamic</button> </div>
+              <div class="chip-note" id="seal-note">Squeeze 10–40% · Gland Fill
+                75–90%</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <div class="ch-dot" style="background:var(--blue3);color:var(--blue2)">↕</div>
+              <span class="ch-title">ทิศทางแรงดัน</span> </div>
+            <div class="cb">
+              <div class="chips" id="pres-chips"> <button class="chip on" data-val="internal"
+                  onclick="pickPres(this)">Internal (งานวาง)</button> <button class="chip"
+                  data-val="external" onclick="pickPres(this)">External (งานรัด)</button>
+              </div>
+              <div class="chip-note" id="pres-note">งานวาง — interference 0–2%</div>
+              <button class="btn" onclick="calc()"> <span style="color: white;"><svg
+                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round"><rect x="4" y="2"
+                      width="16" height="20" rx="2"></rect><line x1="8" y1="7" x2="16"
+                      y2="7"></line><line x1="8" y1="12" x2="13" y2="12"></line><line
+                      x1="15" y1="11" x2="15" y2="16"></line><line x1="12.5" y1="13.5"
+                      x2="17.5" y2="13.5"></line></svg> คำนวณช่วง O-Ring </span></button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <div class="ch-dot" style="background:var(--panel);color:var(--ink3)">≡</div>
+              <span class="ch-title">ค่าอ้างอิง</span> </div>
+            <div class="cb">
+              <table class="rtable">
+                <tbody>
+                  <tr>
+                    <th>ประเภท</th>
+                    <th>Squeeze</th>
+                    <th>Gland Fill</th>
+                  </tr>
+                  <tr>
+                    <td>Static</td>
+                    <td class="mn">10–40%</td>
+                    <td class="mn">75–90%</td>
+                  </tr>
+                  <tr>
+                    <td>Dynamic</td>
+                    <td class="mn">8–30%</td>
+                    <td class="mn">65–80%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="rtable">
+                <tbody>
+                  <tr>
+                    <th>แรงดัน</th>
+                    <th colspan="2">อ้างอิง ID</th>
+                  </tr>
+                  <tr>
+                    <td>Internal</td>
+                    <td colspan="2" class="mn">OD/(1−0~2%) − 2×CS</td>
+                  </tr>
+                  <tr>
+                    <td>External</td>
+                    <td colspan="2" class="mn">ID/(1+1~5%)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- end left -->
+        <!-- RIGHT -->
+        <div id="right-col">
+          <div class="card">
+            <div class="cb empty">
+              <div class="ei">⬡</div>
+              <p>กรอกขนาดร่องแล้วกด</p>
+              <p> <strong>คำนวณช่วง O-Ring</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+var sealType = 'static';
+var presType = 'internal';
+var lastResult = null;
+
+var SEAL_NOTES = {
+  'static':  'Squeeze 10–40%  .  Gland Fill 75–90%',
+  'dynamic': 'Squeeze 8–30%   .  Gland Fill 65–80%'
+};
+var PRES_NOTES = {
+  'internal': 'งานวาง — interference 0–2%',
+  'external': 'งานรัด — interference 1–5%'
+};
+
+function pickSeal(el) {
+  var chips = document.getElementById('seal-chips').querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  el.classList.add('on');
+  sealType = el.getAttribute('data-val');
+  document.getElementById('seal-note').textContent = SEAL_NOTES[sealType];
+}
+
+function pickPres(el) {
+  var chips = document.getElementById('pres-chips').querySelectorAll('.chip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  el.classList.add('on');
+  presType = el.getAttribute('data-val');
+  document.getElementById('pres-note').textContent = PRES_NOTES[presType];
+}
+
+function fmtN(n, d) {
+  if (d === undefined) d = 3;
+  if (!isFinite(n)) return '—';
+  return n.toFixed(d);
+}
+function fmtP(n, d) {
+  if (d === undefined) d = 1;
+  return fmtN(n, d) + '%';
+}
+function clamp(x, a, b) {
+  return Math.max(a, Math.min(b, x));
+}
+function getVal(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function calc() {
+  var od = getVal('g-od');
+  var id = getVal('g-id');
+  var w  = getVal('g-w');
+
+  if (!od || !id || !w)  return showErr('กรุณากรอก OD / ID / W ให้ครบ');
+  if (od <= id)          return showErr('OD ร่องต้องมากกว่า ID ร่อง');
+  if (w <= 0)            return showErr('W ร่องต้องมากกว่า 0');
+
+  var sqMin   = sealType === 'static' ? 10 : 8;
+  var sqMax   = sealType === 'static' ? 40 : 30;
+  var fillMin = sealType === 'static' ? 75 : 65;
+  var fillMax = sealType === 'static' ? 90 : 80;
+  var intMin  = presType === 'internal' ? 0 : 1;
+  var intMax  = presType === 'internal' ? 2 : 5;
+
+  var depth = (od - id) / 2;
+  var grooveArea = depth * w;
+
+  // Compression Squeeze อ้างอิงสไลด์ ecoseal: อัตราส่วนการอัดตัว = (CS - ความสูงร่อง)/CS x100
+  // สไลด์ใช้ "ความสูงร่อง" (depth) ตัวเดียวกันทุกทิศทางแรงดัน ไม่แยกงานวาง/งานรัด
+  var sqBasis = depth;
+
+  // CS from Squeeze: CS = sqBasis / (1 - sq/100)
+  var csSqLo   = sqBasis / (1 - sqMin / 100);
+  var csSqHi   = sqBasis / (1 - sqMax / 100);
+
+  // CS from Fill: CS = 2 * sqrt(fill * depth * w / PI)
+  var csFillLo = 2 * Math.sqrt(fillMin / 100 * depth * w / Math.PI);
+  var csFillHi = 2 * Math.sqrt(fillMax / 100 * depth * w / Math.PI);
+
+  // Intersection
+  var csMin = Math.max(csSqLo, csFillLo);
+  var csMax = Math.min(csSqHi, csFillHi);
+  var csMid = (csMin + csMax) / 2;
+
+  // ID range — อ้างอิงสูตร ค่าความแน่น (Interference) จากสไลด์ ecoseal
+  // (ใช้รูปแบบหาร 1±% ตามสไลด์ แทนการคูณโดยประมาณแบบเดิม)
+  // แกน "งานวาง" (0-2%) / "งานรัด" (1-5%) ในโปรแกรมคงไว้เหมือนเดิม ไม่สลับตามสไลด์
+  //
+  // งานวาง: สไลด์คำนวณ O-Ring O.D. = Gland O.D./(1-%stretch) ตรงๆ
+  // แต่โปรแกรมต้องรายงานเป็น ID ของโอริง จึงต้องลบ CS ทั้งสองข้างออกจาก OD ที่ยืดแล้ว
+  // (O-ring OD = ID + 2*CS) — ใช้ interval arithmetic ให้ช่วงถูกต้อง:
+  //   ID ต่ำสุด = OD ยืดต่ำสุด - CS สูงสุด, ID สูงสุด = OD ยืดสูงสุด - CS ต่ำสุด
+  //
+  // งานรัด: สไลด์คำนวณ O-Ring I.D. = Gland I.D./(1+%stretch) ตรงๆ (ใช้ตามนี้เลย)
+  var idMin, idMax;
+  if (presType === 'internal') {
+    var odStretchLo = od / (1 - intMin / 100);
+    var odStretchHi = od / (1 - intMax / 100);
+    idMin = odStretchLo - 2 * csMax;
+    idMax = odStretchHi - 2 * csMin;
+  } else {
+    idMin = id / (1 + intMax / 100);
+    idMax = id / (1 + intMin / 100);
+  }
+  var idMid = (idMin + idMax) / 2;
+
+  lastResult = {
+    od: od, id: id, w: w,
+    depth: depth, grooveArea: grooveArea, sqBasis: sqBasis,
+    sqMin: sqMin, sqMax: sqMax,
+    fillMin: fillMin, fillMax: fillMax,
+    intMin: intMin, intMax: intMax,
+    csSqLo: csSqLo, csSqHi: csSqHi,
+    csFillLo: csFillLo, csFillHi: csFillHi,
+    csMin: csMin, csMax: csMax, csMid: csMid,
+    idMin: idMin, idMax: idMax, idMid: idMid,
+    presType: presType, sealType: sealType
+  };
+
+  renderResults(lastResult);
+}
+
+function showErr(msg) {
+  document.getElementById('right-col').innerHTML =
+    '<div class="card"><div class="cb"><div class="alert err">&#x2717;  ' + msg + '</div></div></div>';
+}
+
+function renderResults(d) {
+  var csOk = d.csMin < d.csMax;
+
+  var warnHtml = '';
+  if (!csOk) {
+    warnHtml = '<div class="alert warn">&#x26A0; CS Min >= CS Max — ช่วงขัดแย้ง ลองปรับ W หรือขนาดร่อง</div>';
+  }
+
+  var idWarnHtml = '';
+  if (d.idMin >= d.idMax || d.idMin <= 0) {
+    idWarnHtml = '<div class="alert warn">&#x26A0; ช่วง ID ขัดแย้งหรือติดลบ — ลองปรับขนาดร่องหรือ Squeeze/Fill</div>';
+  }
+
+  var html = '';
+
+  // CS card
+  html += '<div class="card">';
+  html += '<div class="ch"><div class="ch-dot" style="background:var(--yellow3);color:var(--yellow2)">&#9675;</div>';
+  html += '<span class="ch-title">Cross Section (CS)</span>';
+  html += '<span style="margin-left:auto;font-size:10px;color:var(--ink3);font-family:var(--mono)">depth=' + fmtN(d.depth) + ' mm &nbsp;·&nbsp; area=' + fmtN(d.grooveArea, 2) + ' mm&#178;</span>';
+  html += '</div>';
+  html += '<div class="cb">';
+  html += warnHtml;
+  html += '<div class="stat"><div class="stat-lbl">ช่วง CS (Min – Max)</div><div class="stat-range">' + fmtN(d.csMin) + ' – ' + fmtN(d.csMax) + ' <span class="u">mm</span></div></div>';
+  html += '<div class="stat accent"><div class="stat-lbl">CS กลาง (แนะนำ)</div><div class="stat-big">' + fmtN(d.csMid) + ' <span class="u">mm</span></div></div>';
+  html += '<div class="cgrid">';
+  html += '<div class="cpill"><div class="cl">จาก Squeeze (' + d.sqMin + '–' + d.sqMax + '%)</div><div class="cv">' + fmtN(d.csSqLo) + ' – ' + fmtN(d.csSqHi) + ' mm</div></div>';
+  html += '<div class="cpill"><div class="cl">จาก Gland Fill (' + d.fillMin + '–' + d.fillMax + '%)</div><div class="cv">' + fmtN(d.csFillLo) + ' – ' + fmtN(d.csFillHi) + ' mm</div></div>';
+  html += '</div>';
+  html += '</div></div>';
+
+  // ID card
+  html += '<div class="card">';
+  html += '<div class="ch"><div class="ch-dot" style="background:var(--blue3);color:var(--blue2)">&#9675;</div>';
+  html += '<span class="ch-title">Inside Diameter (ID)</span>';
+  html += '</div>';
+  html += '<div class="cb">';
+  html += idWarnHtml;
+  html += '<div class="stat"><div class="stat-lbl">ช่วง ID (Min – Max)</div><div class="stat-range">' + fmtN(d.idMin) + ' – ' + fmtN(d.idMax) + ' <span class="u">mm</span></div></div>';
+  html += '<div class="stat accent"><div class="stat-lbl">ID กลาง (แนะนำ)</div><div class="stat-big">' + fmtN(d.idMid) + ' <span class="u">mm</span></div></div>';
+  html += '</div></div>';
+
+  // Check card
+  html += '<div class="card">';
+  html += '<div class="ch"><div class="ch-dot" style="background:var(--panel);color:var(--ink3)">&#10003;</div>';
+  html += '<span class="ch-title">ตรวจสอบ O-Ring ที่มีอยู่</span>';
+  html += '</div>';
+  html += '<div class="cb">';
+  html += '<div class="row2" style="margin-bottom:.75rem">';
+  html += '<div class="field" style="margin-bottom:0"><label>CS ที่มี (mm)</label><input type="number" id="chk-cs" step="0.001" placeholder="เช่น ' + fmtN(d.csMid) + '"></div>';
+  html += '<div class="field" style="margin-bottom:0"><label>ID ที่มี (mm)</label><input type="number" id="chk-id" step="0.001" placeholder="เช่น ' + fmtN(d.idMid) + '"></div>';
+  html += '</div>';
+  html += '<button class="btn sm" onclick="checkOring()">&#10003; เช็คขนาดนี้</button>';
+  html += '<div id="chk-out" style="margin-top:.75rem"></div>';
+  html += '</div></div>';
+
+  document.getElementById('right-col').innerHTML = html;
+}
+
+function checkOring() {
+  if (!lastResult) return;
+  var d = lastResult;
+
+  var csInput = parseFloat(document.getElementById('chk-cs').value);
+  var idInput = parseFloat(document.getElementById('chk-id').value);
+
+  if (isNaN(csInput) || isNaN(idInput) || csInput <= 0 || idInput <= 0) {
+    document.getElementById('chk-out').innerHTML =
+      '<div class="alert err">กรุณากรอก CS และ ID ให้ครบ</div>';
+    return;
+  }
+
+  var csIn   = csInput >= d.csMin && csInput <= d.csMax;
+
+  // ช่วง ID ที่ยอมรับได้ต้องคำนวณจาก CS ที่กรอกจริง (ไม่ใช่เทียบกับ d.idMin/d.idMax
+  // ซึ่งคำนวณจากช่วง CS กว้างๆ ของร่องทั้งหมดด้านบน) เพราะ ID ของ O-ring ผูกกับ CS ของมันเอง
+  var idLo, idHi;
+  if (d.presType === 'internal') {
+    idLo = d.od / (1 - d.intMin / 100) - 2 * csInput;
+    idHi = d.od / (1 - d.intMax / 100) - 2 * csInput;
+  } else {
+    idLo = d.id / (1 + d.intMax / 100);
+    idHi = d.id / (1 + d.intMin / 100);
+  }
+  var idIn   = idInput >= idLo && idInput <= idHi;
+
+  var actSq   = (csInput - d.sqBasis) / csInput * 100;
+  var actFill = Math.PI * Math.pow(csInput / 2, 2) / (d.depth * d.w) * 100;
+  var sqOk    = actSq   >= d.sqMin   && actSq   <= d.sqMax;
+  var fillOk  = actFill >= d.fillMin && actFill <= d.fillMax;
+  var allPass = csIn && idIn && sqOk && fillOk;
+
+  var sqW   = clamp(actSq   / (d.sqMax   * 1.3) * 100, 0, 100).toFixed(1);
+  var fillW = clamp(actFill / (d.fillMax * 1.3) * 100, 0, 100).toFixed(1);
+
+  var statusClass = allPass ? 'ok' : 'err';
+  var statusIcon  = allPass ? '&#10003;' : '&#10007;';
+  var statusText  = allPass ? 'O-Ring ขนาดนี้ใช้ได้' : 'O-Ring ขนาดนี้ไม่ผ่านเกณฑ์';
+
+  var csNote  = csIn  ? 'ผ่าน' : (csInput < d.csMin ? 'ต่ำเกิน — Squeeze ไม่ถึงขั้นต่ำ' : 'สูงเกิน — Squeeze เกินขีดบน');
+  var idNote  = idIn  ? 'ผ่าน' : (idInput < idLo ? 'เล็กเกิน' : 'ใหญ่เกิน');
+  var sqNote  = sqOk  ? 'ผ่าน' : (actSq < d.sqMin ? 'ต่ำเกิน — อาจรั่ว' : 'สูงเกิน — อาจ extrude');
+  var filNote = fillOk? 'ผ่าน' : (actFill < d.fillMin ? 'ต่ำเกิน — O-ring อาจล้ม' : 'สูงเกิน — ไม่มีที่ขยาย');
+
+  var out = '';
+  out += '<div class="alert ' + statusClass + '">' + statusIcon + '  ' + statusText + '</div>';
+  out += '<div class="chklist">';
+
+  out += mkChk(csIn,  'CS ที่ใส่', fmtN(csInput) + ' mm',
+    'ช่วง ' + fmtN(d.csMin) + '–' + fmtN(d.csMax) + ' mm', csNote);
+
+  out += mkChk(idIn,  'ID ที่ใส่', fmtN(idInput) + ' mm',
+    'ช่วง ' + fmtN(idLo) + '–' + fmtN(idHi) + ' mm', idNote);
+
+  out += mkChkMeter(sqOk,  'Compression Squeeze', fmtP(actSq),
+    'เป้า ' + d.sqMin + '–' + d.sqMax + '%', sqNote, sqW, sqOk);
+
+  out += mkChkMeter(fillOk,'Gland Fill', fmtP(actFill),
+    'เป้า ' + d.fillMin + '–' + d.fillMax + '%', filNote, fillW, fillOk);
+
+  out += '</div>';
+  document.getElementById('chk-out').innerHTML = out;
+}
+
+function mkChk(pass, label, val, range, note) {
+  var cls  = pass ? 'pass' : 'fail';
+  var icon = pass ? '&#10003;' : '&#10007;';
+  var noteHtml = pass ? '' : '<div class="chki-note">' + note + '</div>';
+  return '<div class="chki ' + cls + '">'
+    + '<div class="chki-icon">' + icon + '</div>'
+    + '<div class="chki-body"><div class="chki-label">' + label + '</div><div class="chki-note">' + range + '</div>' + noteHtml + '</div>'
+    + '<div class="chki-val">' + val + '</div>'
+    + '</div>';
+}
+
+function mkChkMeter(pass, label, val, range, note, meterW, meterOk) {
+  var cls  = pass ? 'pass' : 'fail';
+  var icon = pass ? '&#10003;' : '&#10007;';
+  var noteHtml = pass ? '' : '<div class="chki-note">' + note + '</div>';
+  var mClass = meterOk ? 'go' : 'bad';
+  return '<div class="chki ' + cls + '" style="flex-wrap:wrap">'
+    + '<div class="chki-icon">' + icon + '</div>'
+    + '<div class="chki-body" style="flex:1;min-width:0"><div class="chki-label">' + label + '</div><div class="chki-note">' + range + '</div>' + noteHtml
+    + '<div class="mtrack" style="margin-top:5px"><div class="mfill ' + mClass + '" style="width:' + meterW + '%"></div></div>'
+    + '</div>'
+    + '<div class="chki-val">' + val + '</div>'
+    + '</div>';
+}
+
+// auto calc on load
+calc();
+</script> </body>
+</html>
